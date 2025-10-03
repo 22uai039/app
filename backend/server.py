@@ -105,7 +105,9 @@ def create_access_token(user_id: str) -> str:
     payload = {"user_id": user_id, "exp": datetime.now(timezone.utc).timestamp() + 86400}  # 24 hours
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-async def get_current_user(authorization: str = None):
+from fastapi import Header
+
+async def get_current_user(authorization: str = Header(None)):
     if not authorization:
         raise HTTPException(status_code=401, detail="Authorization token required")
     
