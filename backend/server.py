@@ -234,8 +234,7 @@ async def create_profile(profile_data: UserProfile, user: User = Depends(get_cur
     return {"message": "Profile created successfully"}
 
 @api_router.get("/profile")
-async def get_profile(authorization: str = None):
-    user = await get_current_user(authorization)
+async def get_profile(user: User = Depends(get_current_user)):
     
     profile_doc = await db.user_profiles.find_one({"user_id": user.id})
     if not profile_doc:
