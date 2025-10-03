@@ -219,11 +219,27 @@ async def login_user(login_data: UserLogin):
 
 # Profile Endpoints
 @api_router.post("/profile")
-async def create_profile(profile_data: UserProfile, user: User = Depends(get_current_user)):
+async def create_profile(profile_data: AssessmentInput, user: User = Depends(get_current_user)):
     
-    # Store profile
-    profile_dict = profile_data.dict()
-    await db.user_profiles.insert_one(profile_dict)
+    # Create complete profile with user_id
+    complete_profile = UserProfile(
+        user_id=user.id,
+        academic_level=profile_data.academic_level,
+        current_class=profile_data.current_class,
+        stream=profile_data.stream,
+        subjects=profile_data.subjects,
+        grades=profile_data.grades,
+        interests=profile_data.interests,
+        strengths=profile_data.strengths,
+        career_goals=profile_data.career_goals
+    )
+    
+    # Store/update profile
+    await db.user_profiles.update_one(
+        {"user_id": user.id},
+        {"$set": complete_profile.dict()},
+        upsert=True
+    )
     
     # Update user profile_completed status
     await db.users.update_one(
