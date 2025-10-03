@@ -244,8 +244,7 @@ async def get_profile(user: User = Depends(get_current_user)):
 
 # Career Assessment Endpoints
 @api_router.post("/assessment/analyze")
-async def analyze_career_fit(profile_data: UserProfile, authorization: str = None):
-    user = await get_current_user(authorization)
+async def analyze_career_fit(profile_data: UserProfile, user: User = Depends(get_current_user)):
     
     try:
         # Prepare analysis prompt
