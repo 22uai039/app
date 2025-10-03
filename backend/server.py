@@ -219,8 +219,7 @@ async def login_user(login_data: UserLogin):
 
 # Profile Endpoints
 @api_router.post("/profile")
-async def create_profile(profile_data: UserProfile, authorization: str = None):
-    user = await get_current_user(authorization)
+async def create_profile(profile_data: UserProfile, user: User = Depends(get_current_user)):
     
     # Store profile
     profile_dict = profile_data.dict()
