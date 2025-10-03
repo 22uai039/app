@@ -337,8 +337,7 @@ async def chat_with_bot(chat_request: ChatRequest, user: User = Depends(get_curr
         raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
 
 @api_router.get("/chat/history")
-async def get_chat_history(authorization: str = None):
-    user = await get_current_user(authorization)
+async def get_chat_history(user: User = Depends(get_current_user)):
     
     chat_docs = await db.chat_history.find({"user_id": user.id}).sort("timestamp", -1).limit(20).to_list(20)
     return [ChatMessage(**doc) for doc in chat_docs]
