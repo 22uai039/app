@@ -774,10 +774,13 @@ const RecommendationsView = ({ profile }) => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API}/assessment/analyze`, profile);
+      // Remove user_id from profile data as it will be handled by backend auth
+      const {user_id, updated_at, ...profileData} = profile;
+      const response = await axios.post(`${API}/assessment/analyze`, profileData);
       setRecommendations(response.data);
     } catch (error) {
       console.error('Recommendations error:', error);
+      alert('Failed to generate recommendations. Please try again.');
     } finally {
       setIsLoading(false);
     }
