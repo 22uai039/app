@@ -1,0 +1,74 @@
+{
+  "total_tests": 11,
+  "passed_tests": 11,
+  "failed_tests": 0,
+  "success_rate": 100.0,
+  "test_details": [
+    {
+      "test_name": "Root API Endpoint",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:25.341464"
+    },
+    {
+      "test_name": "Career Domains",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:25.382295"
+    },
+    {
+      "test_name": "User Registration",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:25.685597"
+    },
+    {
+      "test_name": "User Registration for Login Test",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:25.991974"
+    },
+    {
+      "test_name": "User Login",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:26.258801"
+    },
+    {
+      "test_name": "Unauthorized Profile Access",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:26.294448"
+    },
+    {
+      "test_name": "Profile Creation",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:26.346797"
+    },
+    {
+      "test_name": "Profile Retrieval",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:26.382219"
+    },
+    {
+      "test_name": "Career Analysis",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:37.465782"
+    },
+    {
+      "test_name": "Chat Functionality",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:54.409536"
+    },
+    {
+      "test_name": "Chat History",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-10-03T19:55:54.470787"
+    }
+  ]
+}
