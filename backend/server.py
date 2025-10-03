@@ -243,33 +243,45 @@ async def get_profile(user: User = Depends(get_current_user)):
     return UserProfile(**profile_doc)
 
 # Career Assessment Endpoints
+# Create a separate model for assessment input (without user_id)
+class AssessmentInput(BaseModel):
+    academic_level: str  # "high_school", "undergraduate", "postgraduate"
+    current_class: Optional[str] = None  # "class_9", "class_10", "class_11", "class_12"
+    stream: Optional[str] = None  # "science", "commerce", "arts"
+    subjects: List[str] = []
+    grades: Dict[str, Any] = {}
+    interests: List[str] = []
+    strengths: List[str] = []
+    career_goals: Optional[str] = None
+
 @api_router.post("/assessment/analyze")
-async def analyze_career_fit(profile_data: UserProfile, user: User = Depends(get_current_user)):
+async def analyze_career_fit(assessment_data: AssessmentInput, user: User = Depends(get_current_user)):
     
     try:
         # Prepare analysis prompt
         analysis_prompt = f"""
         Analyze this Indian student's profile and provide top 5 career recommendations:
         
-        Academic Level: {profile_data.academic_level}
-        Current Class: {profile_data.current_class}
-        Stream: {profile_data.stream}
-        Subjects: {', '.join(profile_data.subjects)}
-        Interests: {', '.join(profile_data.interests)}
-        Strengths: {', '.join(profile_data.strengths)}
-        Career Goals: {profile_data.career_goals}
-        Grades: {profile_data.grades}
+        Academic Level: {assessment_data.academic_level}
+        Current Class: {assessment_data.current_class}
+        Stream: {assessment_data.stream}
+        Subjects: {', '.join(assessment_data.subjects) if assessment_data.subjects else 'Not specified'}
+        Interests: {', '.join(assessment_data.interests) if assessment_data.interests else 'Not specified'}
+        Strengths: {', '.join(assessment_data.strengths) if assessment_data.strengths else 'Not specified'}
+        Career Goals: {assessment_data.career_goals or 'Not specified'}
         
-        For each career recommendation, provide:
+        Please provide personalized career recommendations specifically for Indian students, considering the Indian education system and job market.
+        
+        For each of the top 5 career recommendations, provide:
         1. Career path name
-        2. Brief description (2-3 sentences)
-        3. Educational requirements
+        2. Brief description (2-3 sentences explaining the role)
+        3. Educational requirements in India (specific degrees, institutions)
         4. Key skills needed
-        5. Salary range in India
-        6. Job market prospects
-        7. Confidence score (0.1-1.0)
+        5. Salary range in India (in INR)
+        6. Job market prospects in India
+        7. Confidence score based on the student's profile (0.1 to 1.0)
         
-        Format as JSON array of career objects.
+        Present the recommendations in a clear, structured format that helps the student understand their options.
         """
         
         # Get LLM analysis
@@ -277,9 +289,25 @@ async def analyze_career_fit(profile_data: UserProfile, user: User = Depends(get
         user_message = UserMessage(text=analysis_prompt)
         response = await chat.send_message(user_message)
         
-        # Parse and store recommendations
-        # Note: In production, you'd want to parse JSON properly
-        # For now, returning the AI response directly
+        # Store the assessment data as a complete profile
+        profile_data = UserProfile(
+            user_id=user.id,
+            academic_level=assessment_data.academic_level,
+            current_class=assessment_data.current_class,
+            stream=assessment_data.stream,
+            subjects=assessment_data.subjects,
+            grades=assessment_data.grades,
+            interests=assessment_data.interests,
+            strengths=assessment_data.strengths,
+            career_goals=assessment_data.career_goals
+        )
+        
+        # Store/update profile in database
+        await db.user_profiles.update_one(
+            {"user_id": user.id},
+            {"$set": profile_data.dict()},
+            upsert=True
+        )
         
         return {
             "analysis": response,
