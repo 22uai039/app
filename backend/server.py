@@ -292,8 +292,7 @@ async def analyze_career_fit(profile_data: UserProfile, user: User = Depends(get
 
 # Chatbot Endpoints
 @api_router.post("/chat")
-async def chat_with_bot(chat_request: ChatRequest, authorization: str = None):
-    user = await get_current_user(authorization)
+async def chat_with_bot(chat_request: ChatRequest, user: User = Depends(get_current_user)):
     
     try:
         # Get user profile for context
